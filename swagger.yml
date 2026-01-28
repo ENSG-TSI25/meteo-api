@@ -14,7 +14,20 @@ paths:
   /meteo/v1/live:
     get:
       summary: Get live weather data
-      description: Returns live weather measurements for the requested parameters.
+      description: |
+        Returns live weather measurements for the requested parameters.
+        
+        Available measurement types:
+        - temperature
+        - humidity
+        - pressure
+        - rain
+        - wind_heading
+        - wind_speed_avg
+        - wind_speed_max
+        - wind_speed_min
+        
+        The response will only include the measurements specified in the 'data' query parameter.
       parameters:
         - name: data
           in: query
@@ -23,6 +36,16 @@ paths:
           schema:
             type: string
             example: temperature,humidity,pressure
+          examples:
+            basic:
+              value: "temperature,humidity"
+              summary: Basic measurements
+            wind:
+              value: "wind_speed_avg,wind_heading"
+              summary: Wind measurements
+            all:
+              value: "temperature,humidity,pressure,rain,wind_heading,wind_speed_avg,wind_speed_max,wind_speed_min"
+              summary: All available measurements
             
       responses:
         "200":
@@ -108,8 +131,19 @@ components:
                   example: 2.3522
             measurements:
               type: object
+              description: Dynamic object containing only the measurements requested via the 'data' query parameter
               additionalProperties:
                 $ref: "#/components/schemas/Measurement"
+              example:
+                temperature:
+                  unit: "°C"
+                  value: 18.4
+                humidity:
+                  unit: "%"
+                  value: 65.2
+                pressure:
+                  unit: "hPa"
+                  value: 1013.25
 
     Measurement:
       type: object
